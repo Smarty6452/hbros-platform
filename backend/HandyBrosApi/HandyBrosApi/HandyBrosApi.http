@@ -1,0 +1,6 @@
+@HandyBrosApi_HostAddress = http://localhost:5174
+
+GET {{HandyBrosApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
