@@ -333,11 +333,11 @@
       "CreateJobDto": {
         "type": "object",
         "properties": {
-          "Title": {
+          "title": {
             "type": "string",
             "nullable": true
           },
-          "Body": {
+          "body": {
             "type": "string",
             "nullable": true
           }
@@ -347,27 +347,27 @@
       "JobResponseDto": {
         "type": "object",
         "properties": {
-          "Id": {
+          "id": {
             "type": "integer",
             "format": "int32"
           },
-          "Title": {
+          "title": {
             "type": "string",
             "nullable": true
           },
-          "Body": {
+          "body": {
             "type": "string",
             "nullable": true
           },
-          "PostedDate": {
+          "postedDate": {
             "type": "string",
             "format": "date-time"
           },
-          "PosterName": {
+          "posterName": {
             "type": "string",
             "nullable": true
           },
-          "InterestedCount": {
+          "interestedCount": {
             "type": "integer",
             "format": "int32"
           }
@@ -377,11 +377,11 @@
       "LoginDto": {
         "type": "object",
         "properties": {
-          "Email": {
+          "email": {
             "type": "string",
             "nullable": true
           },
-          "Password": {
+          "password": {
             "type": "string",
             "nullable": true
           }
@@ -391,7 +391,7 @@
       "LoginResponseDto": {
         "type": "object",
         "properties": {
-          "Token": {
+          "token": {
             "type": "string",
             "nullable": true
           },
@@ -409,15 +409,15 @@
       "RegisterDto": {
         "type": "object",
         "properties": {
-          "Name": {
+          "name": {
             "type": "string",
             "nullable": true
           },
-          "Email": {
+          "email": {
             "type": "string",
             "nullable": true
           },
-          "Password": {
+          "password": {
             "type": "string",
             "nullable": true
           },

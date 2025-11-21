@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+// src/App.tsx
+import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -6,10 +7,13 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
-import ProtectedRoute from "./components/ProtectedRoute";
 import InterestedUsers from "./pages/InterestedUsers";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useAuthStore } from "./store/authStore";
 
 const App = () => {
+  const { isAuthenticated, isPoster } = useAuthStore();
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
@@ -26,14 +30,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/create-job"
           element={
             <ProtectedRoute>
-              <CreateJob />
+              {isPoster() ? <CreateJob /> : <Navigate to="/dashboard" replace />}
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/edit-job/:id"
           element={
@@ -42,11 +48,17 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/interested-users" element={
-  <ProtectedRoute>
-    <InterestedUsers />
-  </ProtectedRoute>
-} />
+
+        <Route
+          path="/interested-users"
+          element={
+            <ProtectedRoute>
+              {isPoster() ? <InterestedUsers /> : <Navigate to="/dashboard" replace />}
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   );

@@ -1,78 +1,95 @@
 // src/pages/Dashboard.tsx
 import { useEffect, useState } from "react";
-import { Typography, Button, Card, CardContent } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Container,
+  Box,
+  CircularProgress,
+} from "@mui/material"; 
+
 import { useAuthStore } from "../store/authStore";
 import { jobApi } from "../api/jobApi";
 import JobCard from "../components/JobCard";
 import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+export default function Dashboard() {
   const { user, isPoster } = useAuthStore();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
- useEffect(() => {
-  if (!user) return;
+  useEffect(() => {
+    if (!user) return;
 
-  const loadJobs = async () => {
-    try {
-      setLoading(true);
-      const { data } = user.role === "Poster" 
-        ? await jobApi.getMy()
-        : await jobApi.getAll();
-      setJobs(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const loadJobs = async () => {
+      try {
+        setLoading(true);
+        const res = isPoster()
+          ? await jobApi.getMy()                          // Poster sees only their jobs
+          : await jobApi.getAllWithParams(1, 20);         // Viewer sees public jobs
+        setJobs(res.data);
+      } catch (err: any) {
+        console.error("Load jobs failed:", err.response?.data || err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  loadJobs();
-}, [user?.role]); 
+    loadJobs();
+  }, [user, isPoster]);
 
-  if (!user) return <p className="text-center mt-20">Please login</p>;
-  if (loading) return <p className="text-center mt-20">Loading jobs...</p>;
+  const refresh = () => window.location.reload(); // simple but works
+
+  if (loading) {
+    return (
+      <Box className="flex justify-center items-center min-h-screen">
+        <CircularProgress size={60} thickness={5} />
+      </Box>
+    );
+  }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
+    <Container maxWidth="lg" className="py-12">
+      <Box className="flex justify-between items-center mb-10">
         <Typography variant="h4" className="font-bold text-blue-800">
-          {isPoster() ? "My Posted Jobs" : "All Active Jobs"}
+          {isPoster() ? "My Posted Jobs" : "Available Jobs"}
         </Typography>
+
         {isPoster() && (
-          <Button variant="contained" size="large" onClick={() => navigate("/create-job")}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate("/create-job")}
+            sx={{
+              bgcolor: "#1e40af",
+              px: 5,
+              py: 1.5,
+              fontWeight: "bold",
+              boxShadow: 3,
+              "&:hover": { bgcolor: "#1e3a8a" },
+            }}
+          >
             Post New Job
           </Button>
         )}
-      </div>
+      </Box>
 
       {jobs.length === 0 ? (
-        <Card className="p-10 text-center">
-          <Typography variant="h6" color="text.secondary">
-            {isPoster() ? "You haven't posted any jobs yet." : "No active jobs available."}
+        <Box className="text-center py-20">
+          <Typography variant="h5" color="text.secondary">
+            {isPoster()
+              ? "You haven't posted any jobs yet. Click the button above to get started!"
+              : "No active jobs right now. Check back soon!"}
           </Typography>
-        </Card>
+        </Box>
       ) : (
-        <div className="space-y-6">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              onInterest={() => jobApi.interest(job.id).then(() => alert("Interest recorded!"))}
-              onDelete={isPoster() ? async () => {
-                if (confirm("Delete this job?")) {
-                  await jobApi.remove(job.id);
-                  setJobs(jobs.filter(j => j.id !== job.id));
-                }
-              } : undefined}
-            />
+            <JobCard key={job.id} job={job} onRefresh={refresh} />
           ))}
         </div>
       )}
-    </div>
+    </Container>
   );
-};
-
-export default Dashboard;
+}
