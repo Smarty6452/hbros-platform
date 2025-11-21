@@ -1,47 +1,102 @@
-import { Card, CardContent, Typography, Button } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Chip,
+  Box,
+  Divider,
+} from "@mui/material";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { jobApi } from "../api/jobApi";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
-const JobCard = ({ job, onInterest, onDelete }: { job: any; onInterest: () => void; onDelete?: () => void }) => {
-  const { user } = useAuthStore();
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return "Just now";
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+export default function JobCard({ job, onRefresh }: { job: any; onRefresh?: () => void }) {
+  const { user, isPoster } = useAuthStore();
   const navigate = useNavigate();
-  const isOwner = user?.role === "Poster" && job.posterName === user.name;
+  const isOwner = isPoster() && job.posterName === user?.name;
+
+  const handleInterest = async () => {
+    if (!job?.id) {
+      alert("Cannot express interest: Job ID missing");
+      return;
+    }
+
+    try {
+      await jobApi.interest(job.id);
+      onRefresh?.();
+      alert("You've shown interest in this job!");
+    } catch (err: any) {
+      alert(err.response?.data || "Already interested or job expired");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm("Delete this job?")) return;
+    await jobApi.remove(job.id);
+    onRefresh?.();
+  };
 
   return (
-    <Card className="shadow-lg hover:shadow-xl transition-shadow">
+    <Card className="h-full shadow-lg hover:shadow-xl transition">
       <CardContent>
-        <Typography variant="h5" className="font-bold text-blue-700">{job.title}</Typography>
-        <Typography className="mt-3 text-gray-700 whitespace-pre-wrap">{job.body}</Typography>
+        <Box className="flex justify-between items-start mb-2">
+          <Typography variant="h6" className="font-bold text-blue-800">
+            {job.title}
+          </Typography>
+          {job.interestedCount > 0 && (
+            <Chip label={job.interestedCount} color="error" size="small" />
+          )}
+        </Box>
 
-        <Typography className="text-sm text-gray-500 mt-3">
-          Posted by <strong>{job.posterName}</strong> • {new Date(job.postedDate).toLocaleDateString()}
-          {" • "}
-          <strong>{job.interestedCount} interested</strong>
+        <Typography className="text-gray-700 mb-3 whitespace-pre-wrap">
+          {job.body}
         </Typography>
 
-        <div className="mt-5 flex gap-3 flex-wrap">
-          {user && user.role === "Viewer" && (
-            <Button variant="contained" color="primary" size="small" onClick={onInterest}>
+        <Divider className="my-3" />
+
+        <Typography variant="body2" color="text.secondary">
+          Posted by <strong>{job.posterName}</strong> • {formatDate(job.postedDate)}
+        </Typography>
+
+        <Box className="mt-4 flex gap-2">
+          {!user ? (
+            <Button variant="outlined" fullWidth href="/login">
+              Login to Apply
+            </Button>
+          ) : user.role === "Viewer" ? (
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<FavoriteBorderIcon />}
+              onClick={handleInterest}
+              fullWidth
+            >
               I'm Interested
             </Button>
-          )}
-
-          {isOwner && (
+          ) : isOwner ? (
             <>
-              <Button variant="outlined" size="small" onClick={() => navigate(`/edit-job/${job.id}`)}>
+              <Button variant="outlined" onClick={() => navigate(`/edit-job/${job.id}`)}>
                 Edit
               </Button>
-              {onDelete && (
-                <Button variant="contained" color="error" size="small" onClick={onDelete}>
-                  Delete
-                </Button>
-              )}
+              <Button variant="contained" color="error" onClick={handleDelete}>
+                Delete
+              </Button>
             </>
-          )}
-        </div>
+          ) : null}
+        </Box>
       </CardContent>
     </Card>
   );
-};
-
-export default JobCard;
+}

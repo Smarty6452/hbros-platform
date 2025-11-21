@@ -1,4 +1,4 @@
-// src/components/Navbar.tsx
+// src/components/Navbar.tsx (UPDATED VERSION)
 import React from "react";
 import {
   AppBar,
@@ -13,12 +13,13 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import ConstructionIcon from "@mui/icons-material/Construction";
+import PeopleIcon from "@mui/icons-material/People"; // New icon for Interested Users
 
 const Navbar = () => {
   const { user, token, logout, isAuthenticated, isPoster } = useAuthStore();
   const navigate = useNavigate();
 
-  // Show loading state while token exists but user not decoded yet
+  // Loading state while decoding token
   if (token && !user) {
     return (
       <AppBar position="static" className="bg-gradient-to-r from-blue-700 to-indigo-800">
@@ -62,7 +63,7 @@ const Navbar = () => {
           {/* Logged In */}
           {isAuthenticated() && user ? (
             <>
-              {/* Dashboard Button */}
+              {/* Dashboard */}
               <Button
                 color="inherit"
                 component={Link}
@@ -71,6 +72,26 @@ const Navbar = () => {
               >
                 Dashboard
               </Button>
+
+              {/* Only Posters see "Interested Users" */}
+              {isPoster() && (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/interested-users"
+                  startIcon={<PeopleIcon />}
+                  className="font-bold text-white hover:bg-white/10 px-5 py-2 rounded transition border border-yellow-400"
+                  sx={{
+                    border: "2px solid #FCD34D",
+                    "&:hover": {
+                      backgroundColor: "rgba(252, 211, 77, 0.2)",
+                      borderColor: "#FBBF24",
+                    },
+                  }}
+                >
+                  Interested Users
+                </Button>
+              )}
 
               {/* User Info */}
               <Box className="flex items-center gap-3">

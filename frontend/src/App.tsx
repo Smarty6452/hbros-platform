@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
 import ProtectedRoute from "./components/ProtectedRoute";
+import InterestedUsers from "./pages/InterestedUsers";
 
 const App = () => {
   return (
@@ -41,6 +42,11 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/interested-users" element={
+  <ProtectedRoute>
+    <InterestedUsers />
+  </ProtectedRoute>
+} />
       </Routes>
     </div>
   );

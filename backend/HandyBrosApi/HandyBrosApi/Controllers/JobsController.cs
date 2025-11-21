@@ -17,7 +17,7 @@ namespace HandyBrosApi.Controllers
 
         private int CurrentUserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-        // GET: api/jobs?page=1&size=10&search=developer
+        // GET: api/jobs?page=1&size=10&search=plumber
         [HttpGet]
         public async Task<ActionResult<IEnumerable<JobResponseDto>>> GetJobs(
             [FromQuery] int page = 1,
@@ -52,7 +52,7 @@ namespace HandyBrosApi.Controllers
             return Ok(jobs);
         }
 
-        // POST: api/jobs → Only Poster role
+        // POST: api/jobs → Only Poster
         [HttpPost]
         [Authorize(Roles = "Poster")]
         public async Task<IActionResult> CreateJob(CreateJobDto dto)
@@ -61,7 +61,8 @@ namespace HandyBrosApi.Controllers
             {
                 Title = dto.Title,
                 Body = dto.Body,
-                PosterId = CurrentUserId
+                PosterId = CurrentUserId,
+                PostedDate = DateTime.UtcNow
             };
 
             _db.Jobs.Add(job);
@@ -92,17 +93,14 @@ namespace HandyBrosApi.Controllers
             });
         }
 
-        // PUT: api/jobs/5 → Only the original Poster can edit
+        // PUT: api/jobs/5 → Only owner
         [HttpPut("{id}")]
         [Authorize(Roles = "Poster")]
         public async Task<IActionResult> UpdateJob(int id, CreateJobDto dto)
         {
             var job = await _db.Jobs.FindAsync(id);
-            if (job == null || job.PostedDate < DateTime.UtcNow.AddMonths(-2))
-                return NotFound();
-
-            if (job.PosterId != CurrentUserId)
-                return Forbid("You can only edit your own jobs");
+            if (job == null) return NotFound();
+            if (job.PosterId != CurrentUserId) return Forbid();
 
             job.Title = dto.Title;
             job.Body = dto.Body;
@@ -111,47 +109,48 @@ namespace HandyBrosApi.Controllers
             return NoContent();
         }
 
-        // DELETE: api/jobs/5 → Only the original Poster can delete
+        // DELETE: api/jobs/5 → Only owner
         [HttpDelete("{id}")]
         [Authorize(Roles = "Poster")]
         public async Task<IActionResult> DeleteJob(int id)
         {
             var job = await _db.Jobs.FindAsync(id);
             if (job == null) return NotFound();
-
-            if (job.PosterId != CurrentUserId)
-                return Forbid("You can only delete your own jobs");
+            if (job.PosterId != CurrentUserId) return Forbid();
 
             _db.Jobs.Remove(job);
             await _db.SaveChangesAsync();
             return NoContent();
         }
 
-        // POST: api/jobs/5/interest → Any logged-in user (Viewer or Poster)
+        // POST: api/jobs/5/interest → Any logged-in user
         [HttpPost("{id}/interest")]
         [Authorize]
         public async Task<IActionResult> ExpressInterest(int id)
         {
-            var job = await _db.Jobs.FirstOrDefaultAsync(j => j.Id == id && j.PostedDate >= DateTime.UtcNow.AddMonths(-2));
+            var job = await _db.Jobs
+                .FirstOrDefaultAsync(j => j.Id == id && j.PostedDate >= DateTime.UtcNow.AddMonths(-2));
+
             if (job == null) return NotFound("Job not found or expired");
 
             var alreadyInterested = await _db.JobInterests
                 .AnyAsync(ji => ji.JobId == id && ji.UserId == CurrentUserId);
 
             if (alreadyInterested)
-                return BadRequest("Already expressed interest");
+                return BadRequest("You have already expressed interest in this job");
 
             _db.JobInterests.Add(new JobInterest
             {
                 JobId = id,
-                UserId = CurrentUserId
+                UserId = CurrentUserId,
+                InterestedAt = DateTime.UtcNow
             });
 
             await _db.SaveChangesAsync();
-            return Ok("Interest recorded");
+            return Ok("Interest recorded successfully");
         }
 
-        // GET: api/jobs/my → Only Poster sees their own jobs (including old ones for editing)
+        // GET: api/jobs/my → Poster sees all their jobs (even old ones)
         [HttpGet("my")]
         [Authorize(Roles = "Poster")]
         public async Task<ActionResult> GetMyJobs()
@@ -161,18 +160,18 @@ namespace HandyBrosApi.Controllers
                 .OrderByDescending(j => j.PostedDate)
                 .Select(j => new
                 {
-                    j.Id,
-                    j.Title,
-                    j.Body,
-                    j.PostedDate,
-                    InterestedCount = j.InterestedUsers.Count
+                    id = j.Id,
+                    title = j.Title,
+                    body = j.Body,
+                    postedDate = j.PostedDate,
+                    interestedCount = j.InterestedUsers.Count
                 })
                 .ToListAsync();
 
             return Ok(jobs);
         }
 
-        // GET: api/jobs/my-interested-users → Poster sees who is interested in their jobs
+        // GET: api/jobs/my-interested-users → Who applied to my jobs
         [HttpGet("my-interested-users")]
         [Authorize(Roles = "Poster")]
         public async Task<ActionResult> GetInterestedUsers()
@@ -181,13 +180,14 @@ namespace HandyBrosApi.Controllers
                 .Include(ji => ji.User)
                 .Include(ji => ji.Job)
                 .Where(ji => ji.Job.PosterId == CurrentUserId)
+                .OrderByDescending(ji => ji.InterestedAt)
                 .Select(ji => new
                 {
-                    JobId = ji.Job.Id,
-                    JobTitle = ji.Job.Title,
-                    UserName = ji.User.Name,
-                    UserEmail = ji.User.Email,
-                    InterestedAt = ji.InterestedAt
+                    jobId = ji.Job.Id,
+                    jobTitle = ji.Job.Title,
+                    userName = ji.User.Name,
+                    userEmail = ji.User.Email,
+                    interestedAt = ji.InterestedAt
                 })
                 .ToListAsync();
 
