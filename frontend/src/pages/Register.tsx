@@ -1,83 +1,87 @@
-import React, { useState } from "react"
+import { useState } from "react"
+import { TextField, Button, MenuItem, Card, CardContent, Typography } from "@mui/material"
 import api from "../api/api"
 import { useNavigate } from "react-router-dom"
-import { TextField, Button, Paper, Typography, Box } from "@mui/material"
 
 const Register = () => {
-  const navigate = useNavigate()
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
+    role: "Viewer",
   })
-  const [error, setError] = useState("")
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const navigate = useNavigate()
+
+  const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
+  const handleSubmit = async () => {
     try {
       await api.post("/auth/register", form)
       navigate("/login")
-    } catch {
-      setError("Registration failed. Try again.")
+    } catch (err) {
+      console.error(err)
+      alert("Registration failed")
     }
   }
 
   return (
-    <Box className="flex justify-center items-center min-h-screen p-4">
-      <Paper elevation={3} className="w-full max-w-md p-6">
-        <Typography variant="h5" className="font-bold text-center mb-4">
-          Register
-        </Typography>
-
-        {error && (
-          <Typography color="error" className="text-center mb-2">
-            {error}
+    <div className="flex justify-center mt-10">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardContent>
+          <Typography variant="h5" className="mb-4">
+            Create Account
           </Typography>
-        )}
 
-        <form onSubmit={handleRegister} className="space-y-4">
           <TextField
-            name="name"
             label="Name"
+            name="name"
             fullWidth
-            variant="outlined"
+            className="mb-4"
+            value={form.name}
             onChange={handleChange}
           />
 
           <TextField
-            name="email"
             label="Email"
+            name="email"
             fullWidth
-            variant="outlined"
+            className="mb-4"
+            value={form.email}
             onChange={handleChange}
           />
 
           <TextField
-            name="password"
             label="Password"
+            name="password"
             type="password"
             fullWidth
-            variant="outlined"
+            className="mb-4"
+            value={form.password}
             onChange={handleChange}
           />
 
-          <Button
-            variant="contained"
-            color="primary"
+          <TextField
+            select
+            label="Select Role"
+            name="role"
+            className="mb-4"
             fullWidth
-            type="submit"
+            value={form.role}
+            onChange={handleChange}
           >
+            <MenuItem value="Poster">Poster</MenuItem>
+            <MenuItem value="Viewer">Viewer</MenuItem>
+          </TextField>
+
+          <Button variant="contained" fullWidth onClick={handleSubmit}>
             Register
           </Button>
-        </form>
-      </Paper>
-    </Box>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 
