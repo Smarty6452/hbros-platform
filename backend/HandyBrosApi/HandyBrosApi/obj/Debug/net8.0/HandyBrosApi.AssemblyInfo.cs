@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HandyBrosApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01eca45d86db5cae4b2808a0ae5aa839eaa43aa4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+23c4f28894f0dea16a405100b1cf52c40d5b4560")]
 [assembly: System.Reflection.AssemblyProductAttribute("HandyBrosApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HandyBrosApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
