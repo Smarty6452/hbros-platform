@@ -122,3 +122,6 @@ C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\obj\Debu
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\obj\Debug\net8.0\HandyBrosApi.pdb
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\obj\Debug\net8.0\HandyBrosApi.genruntimeconfig.cache
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\obj\Debug\net8.0\ref\HandyBrosApi.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\FluentValidation.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
