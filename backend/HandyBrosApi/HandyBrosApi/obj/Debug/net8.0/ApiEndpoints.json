@@ -15,7 +15,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HandyBrosApi.DTOs.LoginResponseDto",
+        "Type": "LoginResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",

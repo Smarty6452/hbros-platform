@@ -1,13 +1,18 @@
-
-import { Navigate } from "react-router-dom"
-import { useAuthStore } from "../store/authStore"
+import { Navigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
+import { CircularProgress, Box } from "@mui/material";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const isAuth = useAuthStore((s) => s.isAuthenticated())
+  const { token, user } = useAuthStore();
 
-  if (!isAuth) return <Navigate to="/login" replace />
+  if (!token) return <Navigate to="/login" replace />;
+  if (!user) return (
+    <Box className="flex justify-center items-center min-h-screen">
+      <CircularProgress />
+    </Box>
+  );
 
-  return children
-}
+  return children;
+};
 
-export default ProtectedRoute
+export default ProtectedRoute;
