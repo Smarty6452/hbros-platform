@@ -1,8 +1,10 @@
 ﻿using HandyBrosApi.Data;
 using HandyBrosApi.DTOs;
+using HandyBrosApi.Hubs;          
 using HandyBrosApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;     
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -13,11 +15,19 @@ namespace HandyBrosApi.Controllers
     public class JobsController : ControllerBase
     {
         private readonly AppDbContext _db;
-        public JobsController(AppDbContext db) => _db = db;
+        private readonly IHubContext<NotificationHub> _hubContext;  
+
+        public JobsController(AppDbContext db, IHubContext<NotificationHub> hubContext)
+        {
+            _db = db;
+            _hubContext = hubContext;  
+        }
 
         private int CurrentUserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        private string CurrentUserName => User.FindFirst(ClaimTypes.Name)?.Value ?? "Someone";
 
-        // GET: api/jobs?page=1&size=10&search=plumber
+      
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<JobResponseDto>>> GetJobs(
             [FromQuery] int page = 1,
@@ -25,7 +35,6 @@ namespace HandyBrosApi.Controllers
             [FromQuery] string search = "")
         {
             var twoMonthsAgo = DateTime.UtcNow.AddMonths(-2);
-
             var query = _db.Jobs
                 .Include(j => j.Poster)
                 .Include(j => j.InterestedUsers)
@@ -52,7 +61,6 @@ namespace HandyBrosApi.Controllers
             return Ok(jobs);
         }
 
-        // POST: api/jobs → Only Poster
         [HttpPost]
         [Authorize(Roles = "Poster")]
         public async Task<IActionResult> CreateJob(CreateJobDto dto)
@@ -64,14 +72,11 @@ namespace HandyBrosApi.Controllers
                 PosterId = CurrentUserId,
                 PostedDate = DateTime.UtcNow
             };
-
             _db.Jobs.Add(job);
             await _db.SaveChangesAsync();
-
             return CreatedAtAction(nameof(GetJobById), new { id = job.Id }, job);
         }
 
-        // GET: api/jobs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<JobResponseDto>> GetJobById(int id)
         {
@@ -79,9 +84,7 @@ namespace HandyBrosApi.Controllers
                 .Include(j => j.Poster)
                 .Include(j => j.InterestedUsers)
                 .FirstOrDefaultAsync(j => j.Id == id && j.PostedDate >= DateTime.UtcNow.AddMonths(-2));
-
             if (job == null) return NotFound();
-
             return Ok(new JobResponseDto
             {
                 Id = job.Id,
@@ -93,7 +96,6 @@ namespace HandyBrosApi.Controllers
             });
         }
 
-        // PUT: api/jobs/5 → Only owner
         [HttpPut("{id}")]
         [Authorize(Roles = "Poster")]
         public async Task<IActionResult> UpdateJob(int id, CreateJobDto dto)
@@ -101,15 +103,12 @@ namespace HandyBrosApi.Controllers
             var job = await _db.Jobs.FindAsync(id);
             if (job == null) return NotFound();
             if (job.PosterId != CurrentUserId) return Forbid();
-
             job.Title = dto.Title;
             job.Body = dto.Body;
-
             await _db.SaveChangesAsync();
             return NoContent();
         }
 
-        // DELETE: api/jobs/5 → Only owner
         [HttpDelete("{id}")]
         [Authorize(Roles = "Poster")]
         public async Task<IActionResult> DeleteJob(int id)
@@ -117,18 +116,18 @@ namespace HandyBrosApi.Controllers
             var job = await _db.Jobs.FindAsync(id);
             if (job == null) return NotFound();
             if (job.PosterId != CurrentUserId) return Forbid();
-
             _db.Jobs.Remove(job);
             await _db.SaveChangesAsync();
             return NoContent();
         }
 
-        // POST: api/jobs/5/interest → Any logged-in user
+   
         [HttpPost("{id}/interest")]
         [Authorize]
         public async Task<IActionResult> ExpressInterest(int id)
         {
             var job = await _db.Jobs
+                .Include(j => j.Poster)
                 .FirstOrDefaultAsync(j => j.Id == id && j.PostedDate >= DateTime.UtcNow.AddMonths(-2));
 
             if (job == null) return NotFound("Job not found or expired");
@@ -147,10 +146,25 @@ namespace HandyBrosApi.Controllers
             });
 
             await _db.SaveChangesAsync();
+
+            // ONLY NEW PART: Send real-time notification to the Poster
+            var notification = new
+            {
+                type = "NewInterest",
+                jobId = job.Id,
+                jobTitle = job.Title,
+                userName = CurrentUserName,
+                message = $"{CurrentUserName} showed interest in your job!",
+                timestamp = DateTime.UtcNow
+            };
+
+            await _hubContext.Clients
+                .Group($"User_{job.PosterId}")
+                .SendAsync("ReceiveNotification", notification);
+
             return Ok("Interest recorded successfully");
         }
 
-        // GET: api/jobs/my → Poster sees all their jobs (even old ones)
         [HttpGet("my")]
         [Authorize(Roles = "Poster")]
         public async Task<ActionResult> GetMyJobs()
@@ -167,11 +181,9 @@ namespace HandyBrosApi.Controllers
                     interestedCount = j.InterestedUsers.Count
                 })
                 .ToListAsync();
-
             return Ok(jobs);
         }
 
-        // GET: api/jobs/my-interested-users → Who applied to my jobs
         [HttpGet("my-interested-users")]
         [Authorize(Roles = "Poster")]
         public async Task<ActionResult> GetInterestedUsers()
@@ -190,7 +202,6 @@ namespace HandyBrosApi.Controllers
                     interestedAt = ji.InterestedAt
                 })
                 .ToListAsync();
-
             return Ok(data);
         }
     }
