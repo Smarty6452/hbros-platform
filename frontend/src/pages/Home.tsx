@@ -1,3 +1,4 @@
+// src/pages/Home.tsx
 import { useEffect, useState } from "react";
 import {
   Container,
@@ -25,7 +26,6 @@ export default function Home() {
     try {
       const res = await jobApi.getAllWithParams(page, 6, search);
       setJobs(res.data);
-      // Estimate pages if backend doesn't send total
       setTotalPages(res.data.length < 6 ? page : page + 1);
     } catch (err) {
       console.error(err);
@@ -39,64 +39,163 @@ export default function Home() {
   }, [page, search]);
 
   return (
-    <Container maxWidth="lg" className="py-12">
-      <Box className="text-center mb-10">
-        <Typography variant="h3" className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-800">
-          HandyBros Home Comfort
-        </Typography>
-        <Typography variant="h6" color="text.secondary" className="mt-4">
-          Find trusted professionals for your home projects
-        </Typography>
-      </Box>
-
-      <TextField
-        fullWidth
-        placeholder="Search for plumbers, electricians, carpenters..."
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setPage(1);
-        }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-        sx={{ maxWidth: 700, mx: "auto", display: "block", mb: 8 }}
-        variant="outlined"
-      />
-
-      {loading ? (
-        <Box className="flex justify-center py-20">
-          <CircularProgress size={60} thickness={5} />
+    <Box sx={{ 
+      minHeight: "100vh",
+      background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+      py: 8
+    }}>
+      <Container maxWidth="lg">
+        {/* Hero Section */}
+        <Box sx={{ textAlign: "center", mb: 8 }}>
+          <Typography 
+            variant="h2" 
+            sx={{
+              fontWeight: 900,
+              background: "linear-gradient(135deg, #DC2626 0%, #EF4444 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              mb: 2,
+              letterSpacing: "-1px"
+            }}
+          >
+            HandyBros
+          </Typography>
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              color: "#9CA3AF", 
+              fontWeight: 500,
+              maxWidth: "600px",
+              mx: "auto"
+            }}
+          >
+            Find trusted professionals for your home projects
+          </Typography>
         </Box>
-      ) : jobs.length === 0 ? (
-        <Alert severity="info" className="max-w-2xl mx-auto text-center py-8 text-lg">
-          No active jobs found. {search && "Try a different search term."}
-        </Alert>
-      ) : (
-        <>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {jobs.map((job) => (
-              <JobCard key={job.id} job={job} onRefresh={loadJobs} />
-            ))}
-          </div>
 
-          <Box className="flex justify-center mt-12">
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, p) => setPage(p)}
-              color="primary"
-              size="large"
-              showFirstButton
-              showLastButton
+        {/* Search Bar */}
+        <TextField
+          fullWidth
+          placeholder="Search for plumbers, electricians, carpenters..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "#DC2626" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            maxWidth: 700,
+            mx: "auto",
+            display: "block",
+            mb: 8,
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "#FFFFFF",
+              borderRadius: "12px",
+              fontSize: "1.05rem",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+              "&:hover fieldset": {
+                borderColor: "#DC2626",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#DC2626",
+                borderWidth: "2px"
+              }
+            }
+          }}
+        />
+
+        {/* Loading State */}
+        {loading ? (
+          <Box sx={{ 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center",
+            py: 15 
+          }}>
+            <CircularProgress 
+              size={70} 
+              thickness={4}
+              sx={{ color: "#DC2626" }}
             />
           </Box>
-        </>
-      )}
-    </Container>
+        ) : jobs.length === 0 ? (
+          /* No Jobs Found */
+          <Alert 
+            severity="info" 
+            sx={{ 
+              maxWidth: 600, 
+              mx: "auto", 
+              py: 4,
+              fontSize: "1.1rem",
+              borderRadius: "12px",
+              backgroundColor: "#1E293B",
+              color: "#F9FAFB",
+              border: "1px solid #374151",
+              "& .MuiAlert-icon": {
+                color: "#DC2626"
+              }
+            }}
+          >
+            No active jobs found. {search && "Try a different search term."}
+          </Alert>
+        ) : (
+          <>
+            {/* Jobs Grid */}
+            <Box sx={{
+              display: "grid",
+              gap: 4,
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "repeat(2, 1fr)",
+                lg: "repeat(3, 1fr)"
+              }
+            }}>
+              {jobs.map((job) => (
+                <JobCard key={job.id} job={job} onRefresh={loadJobs} />
+              ))}
+            </Box>
+
+            {/* Pagination */}
+            <Box sx={{ 
+              display: "flex", 
+              justifyContent: "center", 
+              mt: 8 
+            }}>
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={(_, p) => setPage(p)}
+                size="large"
+                showFirstButton
+                showLastButton
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#F9FAFB",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    "&:hover": {
+                      backgroundColor: "rgba(220, 38, 38, 0.2)"
+                    }
+                  },
+                  "& .Mui-selected": {
+                    backgroundColor: "#DC2626 !important",
+                    color: "#F9FAFB",
+                    "&:hover": {
+                      backgroundColor: "#B91C1C !important"
+                    }
+                  }
+                }}
+              />
+            </Box>
+          </>
+        )}
+      </Container>
+    </Box>
   );
 }

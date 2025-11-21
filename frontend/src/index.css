@@ -1,8 +1,60 @@
 @import "tailwindcss";
 
-/* custom css starts here  */
-body {
+/* Color Variables for Consistency */
+:root {
+  --primary-red: #DC2626;
+  --primary-dark: #1F2937;
+  --accent-red: #EF4444;
+  --bg-gradient-start: #0F172A;
+  --bg-gradient-end: #1E293B;
+  --text-light: #F9FAFB;
+  --text-gray: #9CA3AF;
+  --card-bg: #FFFFFF;
+  --hover-red: #B91C1C;
+}
+
+/* Custom CSS starts here */
+* {
   box-sizing: border-box;
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+  color: var(--primary-dark);
+}
+
+/* Smooth transitions for all interactive elements */
+button, a, input, textarea {
+  transition: all 0.3s ease;
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--accent-red);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-gradient-end);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-red);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-red);
 }

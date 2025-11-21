@@ -11,6 +11,7 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import ConstructionIcon from "@mui/icons-material/Construction";
 import api from "../api/api";
 import { useAuthStore } from "../store/authStore";
 
@@ -30,8 +31,6 @@ export default function Login() {
 
     try {
       const res = await api.post("/auth/login", { email, password });
-
-      // .NET returns "Token" or "token"
       const token = res.data.Token || res.data.token;
 
       if (!token) {
@@ -45,7 +44,6 @@ export default function Login() {
         return;
       }
 
-      // Success! Redirect to dashboard
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
       }, 300);
@@ -63,24 +61,69 @@ export default function Login() {
   };
 
   return (
-    <Box className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-      <Paper elevation={20} className="w-full max-w-md p-10 rounded-3xl shadow-2xl">
-        <Box className="text-center mb-10">
-          <Typography variant="h2" className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-800">
+    <Box sx={{
+      minHeight: "100vh",
+      background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      p: 2
+    }}>
+      <Paper 
+        elevation={0}
+        sx={{
+          width: "100%",
+          maxWidth: 480,
+          p: 6,
+          borderRadius: "20px",
+          backgroundColor: "#FFFFFF",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
+        }}
+      >
+        {/* Logo & Title */}
+        <Box sx={{ textAlign: "center", mb: 5 }}>
+          <ConstructionIcon sx={{ fontSize: 60, color: "#DC2626", mb: 2 }} />
+          <Typography 
+            variant="h3" 
+            sx={{
+              fontWeight: 900,
+              background: "linear-gradient(135deg, #DC2626 0%, #EF4444 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              mb: 1
+            }}
+          >
             HandyBros
           </Typography>
-          <Typography variant="h5" color="text.secondary" className="mt-3">
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              color: "#6B7280",
+              fontWeight: 500
+            }}
+          >
             Sign in to continue
           </Typography>
         </Box>
 
+        {/* Error Alert */}
         {error && (
-          <Alert severity="error" className="mb-6 rounded-xl">
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 4, 
+              borderRadius: "12px",
+              backgroundColor: "#FEE2E2",
+              color: "#991B1B",
+              border: "1px solid #FCA5A5"
+            }}
+          >
             {error}
           </Alert>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        {/* Login Form */}
+        <form onSubmit={handleLogin}>
           <TextField
             label="Email"
             type="email"
@@ -89,7 +132,22 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            variant="outlined"
+            sx={{
+              mb: 3,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                "&:hover fieldset": {
+                  borderColor: "#DC2626",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#DC2626",
+                  borderWidth: "2px"
+                }
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#DC2626"
+              }
+            }}
           />
 
           <TextField
@@ -100,7 +158,22 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            variant="outlined"
+            sx={{
+              mb: 4,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                "&:hover fieldset": {
+                  borderColor: "#DC2626",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#DC2626",
+                  borderWidth: "2px"
+                }
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#DC2626"
+              }
+            }}
           />
 
           <Button
@@ -110,21 +183,45 @@ export default function Login() {
             fullWidth
             disabled={loading}
             sx={{
-              py: 2,
+              py: 1.8,
               fontSize: "1.1rem",
-              fontWeight: "bold",
-              background: "linear-gradient(to right, #1e40af, #4338ca)",
-              "&:hover": { background: "linear-gradient(to right, #1e3a8a, #3730a3)" },
+              fontWeight: 700,
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #DC2626 0%, #EF4444 100%)",
+              boxShadow: "0 4px 14px rgba(220, 38, 38, 0.4)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #B91C1C 0%, #DC2626 100%)",
+                boxShadow: "0 6px 18px rgba(220, 38, 38, 0.5)"
+              },
+              "&:disabled": {
+                background: "#D1D5DB"
+              }
             }}
           >
-            {loading ? <CircularProgress size={28} color="inherit" /> : "Sign In"}
+            {loading ? (
+              <CircularProgress size={28} sx={{ color: "#FFFFFF" }} />
+            ) : (
+              "Sign In"
+            )}
           </Button>
         </form>
 
-        <Box className="text-center mt-8">
-          <Typography>
+        {/* Register Link */}
+        <Box sx={{ textAlign: "center", mt: 4 }}>
+          <Typography sx={{ color: "#6B7280", fontSize: "0.95rem" }}>
             Don't have an account?{" "}
-            <MuiLink component={Link} to="/register" className="font-bold text-blue-600 hover:underline">
+            <MuiLink 
+              component={Link} 
+              to="/register" 
+              sx={{
+                fontWeight: 700,
+                color: "#DC2626",
+                textDecoration: "none",
+                "&:hover": {
+                  textDecoration: "underline"
+                }
+              }}
+            >
               Register here
             </MuiLink>
           </Typography>

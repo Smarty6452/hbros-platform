@@ -1,4 +1,4 @@
-// src/components/Navbar.tsx (UPDATED VERSION)
+// src/components/Navbar.tsx
 import React from "react";
 import {
   AppBar,
@@ -13,80 +13,127 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import ConstructionIcon from "@mui/icons-material/Construction";
-import PeopleIcon from "@mui/icons-material/People"; // New icon for Interested Users
+import PeopleIcon from "@mui/icons-material/People";
 
 const Navbar = () => {
   const { user, token, logout, isAuthenticated, isPoster } = useAuthStore();
   const navigate = useNavigate();
 
-  // Loading state while decoding token
   if (token && !user) {
     return (
-      <AppBar position="static" className="bg-gradient-to-r from-blue-700 to-indigo-800">
-        <Toolbar className="justify-center">
-          <CircularProgress color="inherit" size={28} />
+      <AppBar 
+        position="static" 
+        sx={{ 
+          background: "linear-gradient(90deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)",
+          boxShadow: "0 4px 20px rgba(220, 38, 38, 0.3)"
+        }}
+      >
+        <Toolbar sx={{ justifyContent: "center", minHeight: "64px" }}>
+          <CircularProgress sx={{ color: "#DC2626" }} size={32} />
         </Toolbar>
       </AppBar>
     );
   }
 
   return (
-    <AppBar position="static" className="bg-gradient-to-r from-blue-700 to-indigo-800 shadow-xl">
-      <Toolbar className="flex justify-between px-4 py-3 md:px-8 min-h-16">
-
+    <AppBar 
+      position="static" 
+      sx={{ 
+        background: "linear-gradient(90deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)",
+        boxShadow: "0 4px 20px rgba(220, 38, 38, 0.3)"
+      }}
+    >
+      <Toolbar sx={{ 
+        justifyContent: "space-between", 
+        px: { xs: 2, md: 6 }, 
+        py: 1.5,
+        minHeight: "72px"
+      }}>
+        
         {/* LEFT: Logo + Brand */}
-        <Box className="flex items-center gap-3">
-          <ConstructionIcon sx={{ fontSize: 36, color: "#FCD34D" }} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <ConstructionIcon sx={{ fontSize: 40, color: "#DC2626" }} />
           <Typography
             variant="h5"
             component={Link}
             to="/"
-            className="font-extrabold tracking-tight text-white hover:text-yellow-300 transition no-underline"
+            sx={{
+              fontWeight: 800,
+              color: "#F9FAFB",
+              textDecoration: "none",
+              letterSpacing: "0.5px",
+              "&:hover": { 
+                color: "#DC2626",
+                transform: "scale(1.02)"
+              },
+              transition: "all 0.3s ease"
+            }}
           >
             HandyBros
           </Typography>
         </Box>
 
         {/* RIGHT: Navigation */}
-        <Box className="flex items-center gap-4">
-
-          {/* Always show Home */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          
+          {/* Home Button */}
           <Button
-            color="inherit"
             component={Link}
             to="/"
-            className="font-semibold text-white hover:bg-white/10 px-4 py-2 rounded transition"
+            sx={{
+              color: "#F9FAFB",
+              fontWeight: 600,
+              px: 3,
+              py: 1,
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "rgba(220, 38, 38, 0.1)",
+                color: "#DC2626"
+              }
+            }}
           >
             Home
           </Button>
 
-          {/* Logged In */}
           {isAuthenticated() && user ? (
             <>
-              {/* Dashboard */}
+              {/* Dashboard Button */}
               <Button
-                color="inherit"
                 component={Link}
                 to="/dashboard"
-                className="font-semibold text-white hover:bg-white/10 px-4 py-2 rounded transition"
+                sx={{
+                  color: "#F9FAFB",
+                  fontWeight: 600,
+                  px: 3,
+                  py: 1,
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: "rgba(220, 38, 38, 0.1)",
+                    color: "#DC2626"
+                  }
+                }}
               >
                 Dashboard
               </Button>
 
-              {/* Only Posters see "Interested Users" */}
+              {/* Interested Users - Only for Posters */}
               {isPoster() && (
                 <Button
-                  color="inherit"
                   component={Link}
                   to="/interested-users"
                   startIcon={<PeopleIcon />}
-                  className="font-bold text-white hover:bg-white/10 px-5 py-2 rounded transition border border-yellow-400"
                   sx={{
-                    border: "2px solid #FCD34D",
+                    color: "#F9FAFB",
+                    fontWeight: 700,
+                    px: 3,
+                    py: 1,
+                    borderRadius: "8px",
+                    border: "2px solid #DC2626",
+                    backgroundColor: "rgba(220, 38, 38, 0.1)",
                     "&:hover": {
-                      backgroundColor: "rgba(252, 211, 77, 0.2)",
-                      borderColor: "#FBBF24",
-                    },
+                      backgroundColor: "#DC2626",
+                      borderColor: "#DC2626"
+                    }
                   }}
                 >
                   Interested Users
@@ -94,39 +141,39 @@ const Navbar = () => {
               )}
 
               {/* User Info */}
-              <Box className="flex items-center gap-3">
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: 1 }}>
                 <Avatar
                   sx={{
-                    bgcolor: "#FCD34D",
-                    color: "#1E40AF",
+                    bgcolor: "#DC2626",
+                    color: "#F9FAFB",
                     fontWeight: "bold",
-                    width: 40,
-                    height: 40,
+                    width: 44,
+                    height: 44,
+                    border: "2px solid rgba(220, 38, 38, 0.3)"
                   }}
                 >
                   {user.name.charAt(0).toUpperCase()}
                 </Avatar>
 
                 <Box>
-                  <Typography variant="body1" className="text-white font-medium">
-                    Hello, <span className="font-bold">{user.name.split(" ")[0]}</span>
+                  <Typography sx={{ color: "#F9FAFB", fontWeight: 600, fontSize: "0.95rem" }}>
+                    {user.name.split(" ")[0]}
                   </Typography>
                   <Chip
                     label={isPoster() ? "Poster" : "Viewer"}
                     size="small"
-                    color={isPoster() ? "warning" : "info"}
-                    variant="outlined"
                     sx={{
-                      borderColor: "white",
-                      color: "white",
-                      fontWeight: "bold",
-                      height: 24,
+                      bgcolor: isPoster() ? "#DC2626" : "#374151",
+                      color: "#F9FAFB",
+                      fontWeight: 700,
+                      fontSize: "0.7rem",
+                      height: "22px"
                     }}
                   />
                 </Box>
               </Box>
 
-              {/* Logout */}
+              {/* Logout Button */}
               <Button
                 variant="outlined"
                 size="small"
@@ -135,38 +182,60 @@ const Navbar = () => {
                   navigate("/");
                 }}
                 sx={{
-                  borderColor: "white",
-                  color: "white",
+                  borderColor: "#DC2626",
+                  color: "#DC2626",
+                  fontWeight: 600,
+                  px: 2.5,
+                  py: 0.8,
+                  borderRadius: "8px",
                   "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.1)",
-                    borderColor: "#FCD34D",
-                  },
+                    backgroundColor: "#DC2626",
+                    color: "#F9FAFB",
+                    borderColor: "#DC2626"
+                  }
                 }}
               >
                 Logout
               </Button>
             </>
           ) : (
-            /* Not Logged In */
             <>
+              {/* Login Button */}
               <Button
-                color="inherit"
                 component={Link}
                 to="/login"
-                className="font-semibold text-white hover:bg-white/10 px-4 py-2 rounded transition"
+                sx={{
+                  color: "#F9FAFB",
+                  fontWeight: 600,
+                  px: 3,
+                  py: 1,
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: "rgba(220, 38, 38, 0.1)",
+                    color: "#DC2626"
+                  }
+                }}
               >
                 Login
               </Button>
 
+              {/* Register Button */}
               <Button
                 variant="contained"
                 component={Link}
                 to="/register"
-                className="font-bold shadow-lg"
                 sx={{
-                  bgcolor: "#FCD34D",
-                  color: "#1E40AF",
-                  "&:hover": { bgcolor: "#FBBF24" },
+                  bgcolor: "#DC2626",
+                  color: "#F9FAFB",
+                  fontWeight: 700,
+                  px: 3,
+                  py: 1,
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(220, 38, 38, 0.4)",
+                  "&:hover": {
+                    bgcolor: "#B91C1C",
+                    boxShadow: "0 6px 16px rgba(220, 38, 38, 0.5)"
+                  }
                 }}
               >
                 Register
