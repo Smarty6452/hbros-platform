@@ -1,4 +1,3 @@
-// src/pages/InterestedUsers.tsx
 import { useEffect, useState } from "react";
 import {
   Container,
