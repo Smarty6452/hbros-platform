@@ -25,7 +25,7 @@ A modern job posting platform with a clean API, secure authentication, and a pol
 - Viewers: Express Interest in jobs  
 - Pagination, search & filtering  
 - Auto-hide jobs older than 60 days  
-- Real-time notifications via SignalR  
+- Real-time notifications via SignalR and react Toastify 
 - Clean validation & proper HTTP status codes  
 - Fully responsive UI  
 
