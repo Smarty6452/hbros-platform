@@ -8,7 +8,7 @@ A clean, modern job posting platform built with:
 - **Frontend**: React + TypeScript + Vite + MUI  
 - **Database**: MySQL (Entity Framework Core + Pomelo)  
 - **Auth**: JWT Authentication + Role-based Authorization  
-- **Real-time**: SignalR 
+- **Real-time**: SignalR + react toast
 
 ### Features Implemented
 - User registration & login (Poster / Viewer roles)
