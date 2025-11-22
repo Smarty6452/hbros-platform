@@ -23,7 +23,7 @@ A clean, modern job posting platform built with:
 ### Project Structure
 handy-bros-job-platform/
 ├── backend/          → ASP.NET Core 8 API (JWT, EF Core, MySQL)
-├── frontend/         → React + TypeScript + MUI + Vite + TailwindCSS
+├── frontend/         → React + TypeScript + MUI + Vite + TailwindCSS + PostMan
 └── README.md
 
 
