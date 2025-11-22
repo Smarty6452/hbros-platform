@@ -5,6 +5,7 @@ import { jobApi } from "../api/jobApi";
 import PersonIcon from "@mui/icons-material/Person";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PeopleIcon from "@mui/icons-material/People";
+import toast from "react-hot-toast";
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -19,15 +20,15 @@ export default function JobCard({ job, onRefresh }: { job: any; onRefresh?: () =
   const navigate = useNavigate();
   const isOwner = isPoster() && job.posterId === user?.id;
 
-  const handleInterest = async () => {
-    try {
-      await jobApi.interest(job.id);
-      alert("Interest recorded successfully!");
-      onRefresh?.();
-    } catch (err: any) {
-      alert(err.response?.data || "You've already shown interest in this job");
-    }
-  };
+const handleInterest = async () => {
+  try {
+    await jobApi.interest(job.id);
+    toast.success("Interest recorded! Poster notified.");
+    onRefresh?.();
+  } catch (err: any) {
+    toast.error(err.response?.data || "Already interested");
+  }
+};
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this job?")) return;

@@ -19,12 +19,8 @@ C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debu
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
-C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
-C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
-C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
-C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
@@ -125,3 +121,12 @@ C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\obj\Debu
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\FluentValidation.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
 C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.Features.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\System.IO.Pipelines.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\System.Text.Encodings.Web.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\System.Text.Json.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
+C:\IT\PersonalProjects\hbros-platform\backend\HandyBrosApi\HandyBrosApi\obj\Debug\net8.0\swae.build.ex.cache

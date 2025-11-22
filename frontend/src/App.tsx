@@ -10,12 +10,23 @@ import EditJob from "./pages/EditJob";
 import InterestedUsers from "./pages/InterestedUsers";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuthStore } from "./store/authStore";
+import { Toaster } from "react-hot-toast";
+import { startSignalR, stopSignalR } from "./services/signalr";
+import { useEffect } from "react";
 
 const App = () => {
   const { isAuthenticated, isPoster } = useAuthStore();
+  
+  useEffect(() => {
+  if (isAuthenticated()) {
+    startSignalR();
+  }
+  return () => stopSignalR();
+}, [isAuthenticated()]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      <Toaster />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

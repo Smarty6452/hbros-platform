@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@microsoft/signalr": "^10.0.0",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "@tailwindcss/vite": "^4.1.17",
@@ -19,6 +20,7 @@
     "jwt-decode": "^4.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^6.30.2",
     "tailwindcss": "^4.1.17",
     "zustand": "^5.0.8"
